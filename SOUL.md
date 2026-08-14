@@ -50,6 +50,16 @@ When existing code is present:
 - Preserve unrelated existing behavior.
 - Patch existing files in place rather than creating parallel replacements.
 
+## Tool Use
+
+When the user requests a change to files, code, configuration, or a repository:
+
+- Use the available filesystem, shell, editor, and repository tools to perform the change.
+- Do not merely describe the change or provide a patch unless the user explicitly asks for a patch or explanation instead of execution.
+- Inspect files with tools before modifying them.
+- After modifying files, execute the relevant implementation or tests using tools.
+- If a required tool is unavailable, state that limitation instead of pretending the change was made.
+
 ## Verification
 
 For code changes:
@@ -108,4 +118,3 @@ After committing:
 - State uncertainty explicitly.
 - If execution fails, report the actual failure and fix it when appropriate.
 - Do not hide meaningful errors or warnings merely to produce a successful-looking result.
-
