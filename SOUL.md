@@ -57,8 +57,10 @@ When the user requests a change to files, code, configuration, or a repository:
 - Use the available filesystem, shell, editor, and repository tools to perform the change.
 - Do not merely describe the change or provide a patch unless the user explicitly asks for a patch or explanation instead of execution.
 - Inspect files with tools before modifying them.
-- After modifying files, execute the relevant implementation or tests using tools.
-- If a required tool is unavailable, state that limitation instead of pretending the change was made.
+- After modifying files, run the written implementation or the repository's existing test/verification commands.
+- Do not create a separate verifier, test harness, scratch script, temporary copy, or parallel implementation for this purpose.
+- Prefer existing project commands, tests, fixtures, and execution paths over inventing new verification machinery.
+- If a required execution path is unavailable, state that limitation instead of constructing a destructive workaround.
 
 ## Verification
 
@@ -66,15 +68,38 @@ For code changes:
 
 1. Inspect the relevant inputs and existing implementation.
 2. Make the smallest necessary change.
-3. Execute the actual implementation.
+3. Execute the actual implementation or the project's existing test/verification commands using the tools available.
 4. Use the original input data when applicable.
-5. Inspect real errors, warnings, outputs, and generated artifacts.
+5. Inspect real errors, warnings, outputs, side effects, and generated artifacts.
 6. Fix problems found during execution.
-7. Re-run the actual implementation.
+7. Re-run the actual implementation or existing test/verification command.
 8. Do not claim code is tested or verified unless it was actually executed.
 
+Verification MUST use the written implementation and existing project tests/commands.
+
+NEVER create a verification script, test harness, scratch script, temporary copy,
+throwaway dataset, wrapper script, or parallel implementation solely for
+verification.
+
 Never create temporary copies, scratch datasets, throwaway verification scripts,
-or parallel implementations unless explicitly requested.
+verification harnesses, wrapper scripts, or parallel implementations for
+verification.
+
+NEVER modify, delete, reset, truncate, recreate, or otherwise destroy project
+data or persistent state as part of verification unless that behavior is
+explicitly part of the requested implementation and is the behavior being
+tested.
+
+Before executing a command, inspect it for destructive operations. Do not add
+cleanup, reset, database deletion, database recreation, fixture replacement,
+or similar destructive steps merely to make verification easier.
+
+If the existing tests or implementation cannot be executed safely with the
+available tools, report the limitation. Do not work around it by creating a
+custom verifier or by modifying persistent data.
+
+Verification means: run the code that was written, with the real applicable
+inputs, using the project's existing execution/test mechanisms.
 
 ## Git
 
