@@ -52,15 +52,33 @@ When existing code is present:
 
 ## Tool Use
 
-When the user requests a change to files, code, configuration, or a repository:
+For repository and coding tasks, prefer native tools over programmatic
+filesystem access.
 
-- Use the available filesystem, shell, editor, and repository tools to perform the change.
-- Do not merely describe the change or provide a patch unless the user explicitly asks for a patch or explanation instead of execution.
-- Inspect files with tools before modifying them.
-- After modifying files, run the written implementation or the repository's existing test/verification commands.
-- Do not create a separate verifier, test harness, scratch script, temporary copy, or parallel implementation for this purpose.
-- Prefer existing project commands, tests, fixtures, and execution paths over inventing new verification machinery.
-- If a required execution path is unavailable, state that limitation instead of constructing a destructive workaround.
+Tool preference:
+
+1. `search_files` — locate symbols, definitions, references, and relevant files.
+2. `read_file` — inspect file contents.
+3. `patch` — make minimal edits to existing files.
+4. `write_file` — create new files or replace complete file contents when needed.
+5. `terminal` — run builds, tests, git, and other shell commands.
+
+Use `execute_code` only when the task genuinely requires Python or when
+programmatic orchestration of multiple tool calls provides a clear advantage.
+
+NEVER use `execute_code` merely to:
+- read a file;
+- search files;
+- grep for a symbol;
+- inspect source code;
+- edit a file;
+- replace text in a file.
+
+Do not use Python's filesystem APIs as a substitute for native file tools.
+
+When inspecting existing code, use `search_files` and `read_file`.
+When editing existing code, use `patch`.
+After editing, use `terminal` for the project's existing build/test commands.
 
 ## Verification
 
