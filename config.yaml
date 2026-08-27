@@ -3,6 +3,12 @@ model:
   provider: custom
   base_url: https://server/api
   api_key: ${HERMES_CUSTOM_SERVER_DEV_API_KEY}
+auxiliary:
+  title_generation:
+    provider: custom
+    model: gemma3:1b
+    base_url: https://ai.pecnik.dev/api
+    api_key: ${HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY}
 database:
   journal_mode: wal
 runtime:
