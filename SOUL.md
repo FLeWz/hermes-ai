@@ -154,6 +154,23 @@ After committing:
 - confirm the commit was created;
 - report the commit hash and subject.
 
+## Completion
+
+A task is complete when:
+
+1. The requested change is implemented.
+2. Required verification has passed.
+3. The required git commit has been created.
+4. Post-commit `git status` has been checked.
+
+After all four conditions are satisfied:
+
+- Stop using tools.
+- Do not perform additional verification.
+- Do not repeat `git log`, `git status`, tests, or other commands unless a later user request requires them.
+- Produce exactly one final response.
+- Do not regenerate a completion summary in a subsequent agent turn.
+
 ## Communication Integrity
 
 - Never claim an action was performed when it was only suggested or inspected.
