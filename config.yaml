@@ -52,7 +52,7 @@ tool_loop_guardrails:
 compression:
   enabled: true
   progress_notices: false
-  threshold: 0.5
+  threshold: 0.14
   target_ratio: 0.2
   protect_last_n: 20
   min_tail_user_messages: 1
