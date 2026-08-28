@@ -66,6 +66,8 @@ compression:
   codex_responses_native: false
   codex_responses_compact_threshold: 200000
   idle_compact_after_seconds: 0
+  context_timeout_seconds: 600
+  context_total_ceiling_seconds: 1800
 prompt_caching:
   cache_ttl: 5m
 display:
