@@ -1,13 +1,13 @@
 model:
-  default: sky-code
-  provider: custom
-  base_url: https://ai.pecnik.dev/api
-  api_key: ${HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY}
+  default: claude-sonnet-5-5[1m]
+  provider: claude-subscription-directsdk-experimental
+  base_url: process://claude-subscription-directsdk-experimental
+  api_mode: chat_completions
 database:
   journal_mode: wal
 runtime:
   nofile_soft_limit: 4096
-max_concurrent_sessions: 1
+max_concurrent_sessions: 0
 agent:
   max_turns: 150
   verify_on_stop: false
@@ -54,8 +54,8 @@ compression:
   proactive_prune_tokens: 0
   proactive_prune_min_result_chars: 8000
   proactive_prune_min_reclaim_tokens: 4096
-  context_timeout_seconds: 1800
-  context_total_ceiling_seconds: 3600
+  context_timeout_seconds: 600
+  context_total_ceiling_seconds: 1800
   protect_first_n: 3
   codex_gpt55_autoraise: true
   codex_app_server_auto: native
@@ -102,6 +102,8 @@ delegation:
   max_iterations: 250
 skills:
   creation_nudge_interval: 15
+  auto_load:
+    - caveman
 approvals:
   destructive_slash_confirm: false
 kanban:
@@ -178,18 +180,21 @@ custom_providers:
     request_timeout_seconds: 1800
     stale_timeout_seconds: 1800
     models:
-      - gpt-oss:latest
-      - gemma3:1b
-      - arena-model
-      - hf.co/unsloth/Nemotron-3-Nano-30B-A3B-GGUF:UD-Q4_K_XL
-      - hf.co/unsloth/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF:UD-Q4_K_XL
-      - gemma4:26b
-      - gemma4:e4b
-      - ornith-1.5:35b
-      - ornith-1.5:9b
-      - qwen3.5:9b
-      - qwen3.6:35b
-      - qwen3.8:27b
+      sky-code: {}
+      sky-review: {}
+      commit-gen: {}
+      koruxa-bot: {}
+      hf.co/unsloth/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF:UD-Q4_K_XL: {}
+      qwen3.5:9b: {}
+      hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL: {}
+      gemma4:e4b: {}
+      gemma3:1b: {}
+      gemma4:26b: {}
+      arena-model: {}
+      nemotron-3.5-bolt:latest: {}
+      qwen3.8:latest: {}
+      qwen3:1.7b: {}
+    models_discovered: true
 known_plugin_toolsets:
   cli:
     - a2a
@@ -261,3 +266,7 @@ known_builtin_toolsets:
 #   provider: openrouter
 #   model: anthropic/claude-sonnet-4
     - yuanbao
+plugins:
+  enabled:
+    - claude-subscription-directsdk-experimental
+  disabled: []
