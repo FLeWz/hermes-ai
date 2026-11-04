@@ -1,14 +1,8 @@
 model:
-  default: hf.co/unsloth/Nemotron-3-Nano-30B-A3B-GGUF:UD-Q4_K_XL
+  default: sky-code
   provider: custom
-  base_url: https://server/api
-  api_key: ${HERMES_CUSTOM_SERVER_DEV_API_KEY}
-auxiliary:
-  title_generation:
-    provider: custom
-    model: gemma3:1b
-    base_url: https://ai.pecnik.dev/api
-    api_key: ${HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY}
+  base_url: https://ai.pecnik.dev/api
+  api_key: ${HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY}
 database:
   journal_mode: wal
 runtime:
@@ -52,7 +46,7 @@ tool_loop_guardrails:
 compression:
   enabled: true
   progress_notices: false
-  threshold: 0.14
+  threshold: 0.4
   target_ratio: 0.2
   protect_last_n: 20
   min_tail_user_messages: 1
@@ -60,29 +54,35 @@ compression:
   proactive_prune_tokens: 0
   proactive_prune_min_result_chars: 8000
   proactive_prune_min_reclaim_tokens: 4096
+  context_timeout_seconds: 1800
+  context_total_ceiling_seconds: 3600
   protect_first_n: 3
   codex_gpt55_autoraise: true
   codex_app_server_auto: native
   codex_responses_native: false
   codex_responses_compact_threshold: 200000
   idle_compact_after_seconds: 0
-  context_timeout_seconds: 600
-  context_total_ceiling_seconds: 1800
 prompt_caching:
   cache_ttl: 5m
+auxiliary:
+  title_generation:
+    provider: custom
+    model: gemma3:1b
+    base_url: https://ai.pecnik.dev/api
+    api_key: ${HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY}
 display:
   compact: false
   busy_input_mode: interrupt
   bell_on_complete: false
   show_reasoning: false
+  background_process_notifications: concise
   streaming: true
-  skin: default
+  skin: mono
   interim_assistant_messages: true
   tool_progress: all
   cleanup_progress: false
   long_running_notifications: true
   busy_ack_detail: true
-  background_process_notifications: all
 stt:
   enabled: true
   language: en
@@ -99,9 +99,11 @@ memory:
   nudge_interval: 10
   flush_min_turns: 6
 delegation:
-  max_iterations: 50
+  max_iterations: 250
 skills:
   creation_nudge_interval: 15
+approvals:
+  destructive_slash_confirm: false
 kanban:
   review_dispatch: true
 code_execution:
@@ -116,11 +118,13 @@ onboarding:
 telemetry:
   shared_metrics:
     enabled: false
+    send: false
+    offer_version: 2
 updates:
   pre_update_backup: false
   backup_keep: 5
   non_interactive_local_changes: stash
-_config_version: 34
+_config_version: 52
 session_reset:
   mode: none
   idle_minutes: 1440
@@ -131,6 +135,7 @@ platform_toolsets:
     - browser
     - clarify
     - code_execution
+    - connections
     - context_engine
     - cronjob
     - delegation
@@ -165,26 +170,37 @@ platform_toolsets:
   google_chat:
     - hermes-google_chat
 custom_providers:
-  - name: server
-    base_url: https://server/api
-    key_env: HERMES_CUSTOM_SERVER_API_KEY
-    model: hf.co/unsloth/Nemotron-3-Nano-30B-A3B-GGUF:UD-Q4_K_XL
+  - name: ai.pecnik.dev
+    base_url: https://ai.pecnik.dev/api
+    key_env: HERMES_CUSTOM_AI_PECNIK_DEV_API_KEY
+    model: sky-code
     auto_discovery: true
     request_timeout_seconds: 1800
     stale_timeout_seconds: 1800
     models:
+      - gpt-oss:latest
+      - gemma3:1b
+      - arena-model
       - hf.co/unsloth/Nemotron-3-Nano-30B-A3B-GGUF:UD-Q4_K_XL
+      - hf.co/unsloth/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF:UD-Q4_K_XL
+      - gemma4:26b
+      - gemma4:e4b
+      - ornith-1.5:35b
+      - ornith-1.5:9b
+      - qwen3.5:9b
+      - qwen3.6:35b
+      - qwen3.8:27b
 known_plugin_toolsets:
   cli:
     - a2a
     - spotify
 known_builtin_toolsets:
   cli:
-    - bfl
     - browser
     - clarify
     - code_execution
     - computer_use
+    - connections
     - context_engine
     - cronjob
     - delegation
@@ -206,6 +222,42 @@ known_builtin_toolsets:
     - vision
     - web
     - x_search
+
+# ── Security ──────────────────────────────────────────────────────────
+# Secret redaction is ON by default — strings that look like API keys,
+# tokens, and passwords are masked in tool output, logs, and chat
+# responses before the model or user ever sees them. Set redact_secrets
+# to false to disable (e.g. when developing the redactor itself).
+# tirith pre-exec scanning is enabled by default when the tirith binary
+# is available. Configure via security.tirith_* keys or env vars
+# (TIRITH_ENABLED, TIRITH_BIN, TIRITH_TIMEOUT, TIRITH_FAIL_OPEN).
+#
+# security:
+#   redact_secrets: true
+#   tirith_enabled: true
+#   tirith_path: "tirith"
+#   tirith_timeout: 5
+#   tirith_fail_open: true
+
+# ── Fallback Model ────────────────────────────────────────────────────
+# Automatic provider failover when primary is unavailable.
+# Uncomment and configure to enable. Triggers on rate limits (429),
+# overload (529), service errors (503), or connection failures.
+#
+# Supported providers:
+#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
+#   openai-codex (OAuth — hermes auth) — OpenAI Codex
+#   nous         (OAuth — hermes auth) — Nous Portal
+#   zai          (ZAI_API_KEY)         — Z.AI / GLM
+#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
+#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
+#   minimax      (MINIMAX_API_KEY)     — MiniMax
+#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
+#   bedrock      (AWS IAM / boto3)     — AWS Bedrock (Converse API)
+#
+# For custom OpenAI-compatible endpoints, add base_url and key_env.
+#
+# fallback_model:
+#   provider: openrouter
+#   model: anthropic/claude-sonnet-4
     - yuanbao
-approvals:
-  destructive_slash_confirm: false
