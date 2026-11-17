@@ -101,6 +101,7 @@ memory:
 delegation:
   max_iterations: 250
 skills:
+  create_dir: ~/.hermes-ai-skills
   creation_nudge_interval: 15
   auto_load:
     - caveman
