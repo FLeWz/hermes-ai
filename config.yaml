@@ -105,6 +105,7 @@ skills:
   creation_nudge_interval: 15
   auto_load:
     - caveman
+    - ponytail
 approvals:
   destructive_slash_confirm: false
 kanban:

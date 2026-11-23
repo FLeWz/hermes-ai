@@ -24,3 +24,7 @@ hermes plugins install claude-subscription-directsdk
 hermes skills install JuliusBrussee/caveman/skills/caveman --force
 ```
 
+```
+git clone https://github.com/DietrichGebert/ponytail.git ~/.hermes/plugins/ponytail
+hermes plugins enable ponytail
+```
